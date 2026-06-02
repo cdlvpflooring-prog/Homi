@@ -26,7 +26,7 @@ const TIERS: { count: number; reward: string; days: number }[] = [
   { count: 10, reward: '1 year of HOMI Plus', days: 365 },
 ];
 
-function generateCode(seed?: string): string {
+export function generateCode(seed?: string): string {
   const base = (seed || `${Date.now()}-${Math.random()}`).replace(/[^A-Za-z0-9]/g, '');
   const hash = base.split('').reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
