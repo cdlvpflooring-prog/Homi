@@ -1,14 +1,14 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { View, Text, StyleSheet, Platform } from "react-native";
-import { tabIcons } from "@/constants/actionIcons";
+import { Home, MessageCircle, Shield, User } from "lucide-react-native";
 import { designTokens } from "@/constants/theme";
 import { useAppStore } from "@/hooks/useAppStore";
 
 const GOLD = '#FFD700';
-const GOLD_INACTIVE = 'rgba(255, 215, 0, 0.55)';
-const TAB_ICON_SIZE = 28;
-const TAB_BAR_HEIGHT = 72;
+const GOLD_INACTIVE = 'rgba(255, 215, 0, 0.45)';
+const TAB_ICON_SIZE = 26;
+const TAB_BAR_HEIGHT = 70;
 
 export default function TabLayout() {
   const appStore = useAppStore();
@@ -22,43 +22,42 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: Platform.OS === 'web'
-            ? 'rgba(255, 255, 255, 0.92)'
-            : 'rgba(255, 255, 255, 0.88)',
+            ? 'rgba(15, 23, 42, 0.96)'
+            : 'rgba(15, 23, 42, 0.94)',
           borderTopWidth: 0,
           position: 'absolute' as const,
-          left: 16,
-          right: 16,
-          marginHorizontal: 16,
-          bottom: 16,
+          left: 20,
+          right: 20,
+          marginHorizontal: 20,
+          bottom: 20,
           height: TAB_BAR_HEIGHT,
           paddingTop: 10,
           paddingBottom: 10,
-          borderRadius: 24,
+          borderRadius: 28,
           ...Platform.select({
             ios: {
               shadowColor: '#000',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.12,
-              shadowRadius: 24,
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.28,
+              shadowRadius: 28,
             },
             android: {
-              elevation: 20,
+              elevation: 24,
             },
             default: {
               borderWidth: 1,
-              borderColor: 'rgba(226, 226, 236, 0.6)',
+              borderColor: 'rgba(255,255,255,0.08)',
             },
           }),
         },
         tabBarLabelStyle: {
-          fontSize: 11.5,
+          fontSize: 10.5,
           fontWeight: '600' as const,
-          marginTop: 4,
-          letterSpacing: 0.3,
+          marginTop: 3,
+          letterSpacing: 0.4,
           textAlign: 'center' as const,
         },
         tabBarIconStyle: {
-          marginTop: 0,
           alignSelf: 'center' as const,
         },
         tabBarItemStyle: {
@@ -72,75 +71,76 @@ export default function TabLayout() {
         name="dashboard"
         options={{
           title: "Home",
-          tabBarIcon: ({ focused }) => {
-            const HomeIcon = tabIcons.home;
-            return (
-              <View style={styles.iconWrap} testID="icon-home">
-                <HomeIcon
-                  size={TAB_ICON_SIZE}
-                  color={focused ? GOLD : GOLD_INACTIVE}
-                  strokeWidth={focused ? 2.4 : 2}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconWrap}>
+              <Home
+                size={TAB_ICON_SIZE}
+                color={focused ? GOLD : GOLD_INACTIVE}
+                strokeWidth={focused ? 2.4 : 1.8}
+              />
+            </View>
+          ),
         }}
       />
+
       <Tabs.Screen
         name="messages"
         options={{
           title: "Messages",
-          tabBarIcon: ({ focused }) => {
-            const MessagesIcon = tabIcons.messages;
-            return (
-              <View style={styles.iconWrap} testID="icon-messages">
-                <MessagesIcon
-                  size={TAB_ICON_SIZE}
-                  color={focused ? GOLD : GOLD_INACTIVE}
-                  strokeWidth={focused ? 2.4 : 2}
-                />
-                {unreadCount > 0 && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconWrap}>
+              <MessageCircle
+                size={TAB_ICON_SIZE}
+                color={focused ? GOLD : GOLD_INACTIVE}
+                strokeWidth={focused ? 2.4 : 1.8}
+              />
+              {unreadCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Text>
+                </View>
+              )}
+            </View>
+          ),
         }}
       />
+
       <Tabs.Screen
-        name="nearby"
+        name="safety"
         options={{
-          href: null,
+          title: "Safety",
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconWrap}>
+              {focused && <View style={styles.safetyGlow} />}
+              <Shield
+                size={TAB_ICON_SIZE}
+                color={focused ? GOLD : GOLD_INACTIVE}
+                strokeWidth={focused ? 2.4 : 1.8}
+              />
+            </View>
+          ),
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ focused }) => {
-            const ProfileIcon = tabIcons.profile;
-            return (
-              <View style={styles.iconWrap} testID="icon-profile">
-                <ProfileIcon
-                  size={TAB_ICON_SIZE}
-                  color={focused ? GOLD : GOLD_INACTIVE}
-                  strokeWidth={focused ? 2.4 : 2}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconWrap}>
+              <User
+                size={TAB_ICON_SIZE}
+                color={focused ? GOLD : GOLD_INACTIVE}
+                strokeWidth={focused ? 2.4 : 1.8}
+              />
+            </View>
+          ),
         }}
       />
-      <Tabs.Screen
-        name="scan"
-        options={{
-          href: null,
-        }}
-      />
+
+      <Tabs.Screen name="nearby" options={{ href: null }} />
+      <Tabs.Screen name="scan" options={{ href: null }} />
     </Tabs>
   );
 }
@@ -153,23 +153,30 @@ const styles = StyleSheet.create({
     width: TAB_ICON_SIZE + 8,
     height: TAB_ICON_SIZE + 4,
   },
+  safetyGlow: {
+    position: 'absolute',
+    width: TAB_ICON_SIZE + 16,
+    height: TAB_ICON_SIZE + 16,
+    borderRadius: (TAB_ICON_SIZE + 16) / 2,
+    backgroundColor: 'rgba(255, 215, 0, 0.12)',
+  },
   badge: {
     position: 'absolute',
     top: -4,
     right: -6,
-    backgroundColor: designTokens.color.accent,
+    backgroundColor: designTokens.color.error,
     borderRadius: 10,
-    minWidth: 18,
-    height: 18,
+    minWidth: 17,
+    height: 17,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 3,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: 'rgba(15, 23, 42, 0.94)',
   },
   badgeText: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '700' as const,
   },
 });
