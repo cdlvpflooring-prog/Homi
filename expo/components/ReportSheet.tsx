@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Pressable, Animated, KeyboardAvoidingView, useWindowDimensions, Alert } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Pressable, Animated, KeyboardAvoidingView, useWindowDimensions, Alert, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme, designTokens, componentRecipes } from '@/constants/theme';
 import { EventType, IncidentType, RecipientType, IncidentReport } from '@/types/events';
@@ -427,45 +427,29 @@ export function ReportSheet({ visible, onClose, onSelect, onIncidentSent, initia
   return (
     <>
       {/* Main Event Selection Sheet */}
-      <Modal 
-        visible={visible && flowState.step === 'select_event'} 
-        animationType="none" 
-        transparent 
+      <Modal
+        visible={visible && flowState.step === 'select_event'}
+        animationType="slide"
+        transparent={false}
         onRequestClose={handleClose}
-        presentationStyle={Platform.OS === 'ios' ? 'overFullScreen' : undefined}
+        presentationStyle="fullScreen"
         statusBarTranslucent={Platform.OS === 'android'}
       >
-        <View style={styles.modalContainer}>
-          <Pressable style={styles.backdrop} onPress={handleClose} testID="report-backdrop" />
-          
-          <KeyboardAvoidingView 
+        <SafeAreaView style={styles.fullScreenContainer}>
+          <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.keyboardAvoidingView}
             keyboardVerticalOffset={insets.top}
           >
-            <Animated.View 
-              style={[
-                styles.sheetContainer,
-                {
-                  transform: [{
-                    translateY: slideAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [300, 0], // Slide from center
-                    })
-                  }],
-                  opacity: slideAnim
-                }
-              ]}
-            >
-              <Pressable style={[styles.sheet, dynamicStyles.sheet]} onPress={(e) => e.stopPropagation()}>
+            <View style={styles.sheet}>
                 {/* Handle bar for visual feedback */}
                 <View style={styles.handleBar} />
-                
+
                 <View style={styles.header}>
                   <Text style={styles.title}>Report an Event</Text>
-                  <TouchableOpacity 
-                    onPress={handleClose} 
-                    accessibilityLabel="Close report" 
+                  <TouchableOpacity
+                    onPress={handleClose}
+                    accessibilityLabel="Close report"
                     accessibilityRole="button"
                     testID="report-close"
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -515,10 +499,9 @@ export function ReportSheet({ visible, onClose, onSelect, onIncidentSent, initia
                     })}
                   </View>
                 </ScrollView>
-              </Pressable>
-            </Animated.View>
+            </View>
           </KeyboardAvoidingView>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       {/* Incident Type Selection */}
@@ -552,48 +535,35 @@ export function ReportSheet({ visible, onClose, onSelect, onIncidentSent, initia
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  fullScreenContainer: {
     flex: 1,
-    position: 'relative',
-    zIndex: 9999,
-    elevation: 24,
-  },
-  backdrop: { 
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: designTokens.scrim.backdrop,
-    zIndex: 9999,
+    backgroundColor: designTokens.color.surface,
   },
   keyboardAvoidingView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: designTokens.grid.unit * 8,
-    paddingBottom: designTokens.grid.unit * 4,
-    zIndex: 10000,
   },
-  sheetContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10001,
-  },
-  sheet: { 
-    ...componentRecipes.bottomSheet,
+  sheet: {
+    flex: 1,
     paddingHorizontal: designTokens.grid.unit * 2.5,
     paddingBottom: designTokens.grid.unit * 2.5,
     paddingTop: designTokens.grid.unit * 2,
-    width: '100%',
-    marginHorizontal: designTokens.grid.unit * 2,
-    borderRadius: designTokens.radius.lg,
+    backgroundColor: designTokens.color.surface,
     ...(Platform.OS === 'web' && {
       maxWidth: 600,
-      alignSelf: 'center',
+      alignSelf: 'center' as const,
+      width: '100%',
     }),
   },
+  // kept for sub-sheets (SendToSheet etc.)
+  modalContainer: {
+    flex: 1,
+  },
+  backdrop: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: designTokens.scrim.backdrop,
+  },
+  sheetContainer: { width: '100%' },
   handleBar: {
     width: 36,
     height: 4,

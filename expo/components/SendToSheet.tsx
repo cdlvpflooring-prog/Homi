@@ -9,6 +9,7 @@ import {
   Platform,
   Pressable,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 
 import {
@@ -364,14 +365,13 @@ export function SendToSheet({
     <Modal
       visible={visible}
       animationType="slide"
-      transparent
+      transparent={false}
       onRequestClose={onClose}
-      presentationStyle={Platform.OS === 'ios' ? 'overFullScreen' : undefined}
+      presentationStyle="fullScreen"
       statusBarTranslucent={Platform.OS === 'android'}
     >
-      <Pressable style={styles.backdrop} onPress={onClose} testID="sendto-backdrop">
-        <View style={styles.sheetContainer}>
-          <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+      <SafeAreaView style={styles.fullScreenContainer}>
+          <View style={styles.sheet}>
           <View style={styles.handleBar} />
           <View style={styles.header}>
             <TouchableOpacity
@@ -498,49 +498,32 @@ export function SendToSheet({
               </Text>
             </TouchableOpacity>
           </View>
-          </Pressable>
-        </View>
-      </Pressable>
+          </View>
+      </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.cardBg,
+  },
   backdrop: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   sheetContainer: {
     width: '100%',
-    flex: 1,
-    justifyContent: 'flex-end',
-    ...(Platform.OS === 'web' && {
-      alignSelf: 'center',
-      maxWidth: 600,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }),
   },
   sheet: {
+    flex: 1,
     backgroundColor: theme.colors.cardBg,
-    borderTopLeftRadius: theme.borderRadius.xl,
-    borderTopRightRadius: theme.borderRadius.xl,
     padding: theme.spacing.md,
     paddingBottom: theme.spacing.lg,
     width: '100%',
-    maxHeight: '95%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 25,
     ...(Platform.OS === 'web' && {
       maxWidth: 600,
-      alignSelf: 'center',
-      borderRadius: theme.borderRadius.xl,
-      marginHorizontal: theme.spacing.lg,
-      padding: theme.spacing.lg,
+      alignSelf: 'center' as const,
     }),
   },
   handleBar: {

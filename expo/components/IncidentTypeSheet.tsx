@@ -11,6 +11,7 @@ import {
   Animated,
   KeyboardAvoidingView,
   useWindowDimensions,
+  SafeAreaView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -177,21 +178,19 @@ export function IncidentTypeSheet({ visible, onClose, onSelect }: IncidentTypeSh
   return (
     <Modal
       visible={visible}
-      animationType="none"
-      transparent
+      animationType="slide"
+      transparent={false}
       onRequestClose={handleClose}
-      presentationStyle={Platform.OS === 'ios' ? 'overFullScreen' : undefined}
+      presentationStyle="fullScreen"
       statusBarTranslucent={Platform.OS === 'android'}
     >
-      <View style={styles.modalContainer}>
-        <Pressable style={styles.backdrop} onPress={handleClose} testID="incident-backdrop" />
-        
-        <KeyboardAvoidingView 
+      <SafeAreaView style={styles.fullScreenContainer}>
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoidingView}
           keyboardVerticalOffset={insets.top}
         >
-          <Animated.View 
+          <View
             style={[
               styles.sheetContainer,
               {
@@ -263,60 +262,38 @@ export function IncidentTypeSheet({ visible, onClose, onSelect }: IncidentTypeSh
                 </View>
               </ScrollView>
             </Pressable>
-          </Animated.View>
+          </View>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  fullScreenContainer: {
     flex: 1,
-    position: 'relative',
-    zIndex: 9999,
-    elevation: 24,
+    backgroundColor: theme.colors.cardBg,
   },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 9999,
-  },
+  modalContainer: { flex: 1 },
+  backdrop: { flex: 1 },
   keyboardAvoidingView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: theme.spacing.xl * 2,
-    paddingBottom: theme.spacing.xl,
-    zIndex: 10000,
   },
   sheetContainer: {
+    flex: 1,
     width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10001,
+    ...(Platform.OS === 'web' && {
+      maxWidth: 600,
+      alignSelf: 'center' as const,
+    }),
   },
   sheet: {
+    flex: 1,
     backgroundColor: theme.colors.cardBg,
-    borderRadius: theme.borderRadius.xl,
     paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.lg,
     paddingTop: theme.spacing.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 25,
     width: '100%',
-    marginHorizontal: theme.spacing.lg,
-    ...(Platform.OS === 'web' && {
-      maxWidth: 600,
-      alignSelf: 'center',
-    }),
   },
   handleBar: {
     width: 36,
