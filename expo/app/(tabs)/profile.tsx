@@ -28,6 +28,7 @@ import {
   Sparkles,
   Gift,
   ShieldCheck,
+  Settings,
   User as UserIcon,
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -215,6 +216,9 @@ export default function ProfileScreen() {
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Profile</Text>
+            <View style={styles.headerGear}>
+              <Settings size={22} color={designTokens.color.textMuted} strokeWidth={1.9} />
+            </View>
           </View>
 
           {(() => {
@@ -524,12 +528,25 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 8,
     paddingBottom: 16,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'space-between' as const,
   },
   headerTitle: {
     fontSize: 34,
     fontWeight: "800" as const,
     color: designTokens.color.text,
     letterSpacing: -0.6,
+  },
+  headerGear: {
+    width: 40,
+    height: 40,
+    borderRadius: 13,
+    backgroundColor: designTokens.color.surface,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    borderWidth: 1,
+    borderColor: designTokens.color.borderMuted,
   },
   profileCard: {
     borderRadius: designTokens.radius.xxl,
